@@ -14,7 +14,6 @@ import 'composant/TextEnr.dart';
 
 
 class EnregistrementMedicament extends StatefulWidget {
-  static  var nom_medicament,forme_medicament,doses,prixs,unite="mg";
 
   @override
   State<EnregistrementMedicament> createState() => EnregistrementMedicamentState();
@@ -24,16 +23,21 @@ class EnregistrementMedicament extends StatefulWidget {
 
 class EnregistrementMedicamentState extends State<EnregistrementMedicament> {
   Color appBarColor = Color.fromRGBO(50, 190, 166, 1);
-  var tampoProduit = ["forme gualelique", "Comprimer", "cipo"];
+  var tampoProduit = [ "Comprimer","Injectable", "Cipo"];
   var dose =["mg","poids","ml"];
   var nomProduit="",doseMedoc="",prix="",unite="mg";
   String msg="";
+
+  var selectedValueUnite;
+  var selectedValueForm;
+
+
 
   @override
   Widget build(BuildContext context) {
     var width=MediaQuery.of(context).size.width;
 
-    InputCostom nomMedoc= InputCostom(Name:"nomMedoc" ,elevation:5,long: width-140,lar: 50,
+    InputCostom nomMedoc= InputCostom(Name:"nomMedoc" ,elevation:5,long: width-50,lar: 50,
         value: "Nom du produit"
     );
     InputCostom doseMedoc= InputCostom(Name:"doseMedoc",elevation:5,long: width-140,lar: 50,
@@ -44,25 +48,36 @@ class EnregistrementMedicamentState extends State<EnregistrementMedicament> {
     );
 
     Combobox formeMedoc=  Combobox(
+      textDefaut: "selectionner une forme",
+      selectedValue: selectedValueForm,
         colorInterne: Colors.white,
-        long: width-140,
+        long: width-50,
+        large: 50,
         elevation: 5
         ,
         elements:tampoProduit,
         colorBordure: Colors.white,
       f: (x,y){
-
+        setState(() {
+          selectedValueForm = x;
+        });
       }
     );
     Combobox uniteMedoc=  Combobox(
+        textDefaut: "unite",
+      selectedValue: selectedValueUnite,
         colorInterne: Colors.white,
-        long: width-140,
+        long: width-280,
+        large: 50,
         elevation: 5
         ,
         elements:this.dose,
         colorBordure: Colors.white,
       f:(x,y){
 
+        setState(() {
+          selectedValueUnite = x;
+        });
       }
     );
 
@@ -79,39 +94,47 @@ class EnregistrementMedicamentState extends State<EnregistrementMedicament> {
           text: "",
           logo: "images/Personne.png"
       ).Demarrer(),
-      body: Base(content:
+      body: Base(
+          content:
           BlockElement([
           LigneElement([
-          nomMedoc.lancer(),
-        IconEnr(width, Icons.add)
+          nomMedoc.lancer()
         ]).lancer()
-    ,
-    LigneElement([
-    formeMedoc.lancer(),
-    IconEnr(width, Icons.add)
-    ]).lancer(),
+        ,
+        LigneElement([
+        formeMedoc.lancer()
+        ]).lancer(),
 
 
-    LigneElement([
-   doseMedoc.lancer()
-    ,
-    uniteMedoc.lancer()
-    ]).lancer(),
+        LigneElement([
+       doseMedoc.lancer()
+        ,
+        uniteMedoc.lancer()
+        ]).lancer(),
 
-    LigneElement([
-    prixMedoc.lancer(),
-    TextEnr("Fc",width-330)
-    ]).lancer(),
+        LigneElement([
+        prixMedoc.lancer(),
+        TextEnr("Fc",width-280)
+        ]).lancer(),
 
-    ButtonCostom("Enregistrer",Color.fromRGBO(50, 190, 166, 1),(){
-      print([nomMedoc.ValueAf(),
-        formeMedoc.valeurPropre[0], prixMedoc.ValueAf(),
-        doseMedoc.ValueAf(),   uniteMedoc.valeurPropre[0]]);
+        ButtonCostom("Enregistrer",Color.fromRGBO(50, 190, 166, 1),()async{
 
-      Controler_medicament(context).Enregistrer(nomMedoc.ValueAf(),
-        formeMedoc.valeurPropre[0], prixMedoc.ValueAf(),
-        doseMedoc.ValueAf(),   uniteMedoc.valeurPropre[0]
-    ) ;
+          try {
+            String message = await Controler_medicament(context).Enregistrer(
+              nomMedoc.ValueAf(),
+              formeMedoc.valeurPropre[0],
+              prixMedoc.ValueAf(),
+              doseMedoc.ValueAf(),
+              uniteMedoc.valeurPropre[0],
+            );
+
+            showMyToast(message);
+          } catch (e) {
+
+            showMyToast("Tout les champs sont obligatoires",colorErreur: Colors.red);
+          }
+
+
 
     },taille: 14,mt: 6).lancer(),
 
@@ -121,6 +144,20 @@ class EnregistrementMedicamentState extends State<EnregistrementMedicament> {
     );
 
   }
+}
+
+
+
+void showMyToast(String message,{colorErreur=Colors.black}) {
+  Fluttertoast.showToast(
+    msg:message ,
+    toastLength: Toast.LENGTH_SHORT,
+    gravity: ToastGravity.BOTTOM, // ou TOP, CENTER
+    timeInSecForIosWeb: 2,
+    backgroundColor: colorErreur,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
 }
 
 

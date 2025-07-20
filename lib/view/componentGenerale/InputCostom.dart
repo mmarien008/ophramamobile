@@ -71,6 +71,7 @@ class InputCostom {
                   obscureText: this.estcache,
                   keyboardType: this.type,
                   style: TextStyle(
+
                     color: Colors.black,
                   ),
                   onChanged: (value) {

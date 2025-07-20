@@ -38,7 +38,7 @@ dependencies:
   marquee: ^2.0.0
   marquee_widget: ^1.0.0
   flutter_typeahead: ^3.0.0
-  fluttertoast: ^8.2.5
+  fluttertoast: ^8.2.12
   flutter_native_splash: ^2.2.0+1
   colorful_circular_progress_indicator: ^0.0.2
   flutter_regex: ^0.0.3
